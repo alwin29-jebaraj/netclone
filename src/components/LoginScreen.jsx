@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export default function LoginScreen({ onAuthSuccess }: { onAuthSuccess: (user: any, profiles: any[]) => void }) {
+export default function LoginScreen({ onAuthSuccess }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,7 +12,6 @@ export default function LoginScreen({ onAuthSuccess }: { onAuthSuccess: (user: a
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Simple client-side validation
   const validateForm = () => {
     if (!email || !password) {
       setError('Please enter a valid email and password.');
@@ -34,7 +33,7 @@ export default function LoginScreen({ onAuthSuccess }: { onAuthSuccess: (user: a
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!validateForm()) return;
@@ -54,7 +53,7 @@ export default function LoginScreen({ onAuthSuccess }: { onAuthSuccess: (user: a
       }
 
       onAuthSuccess(data.user, data.profiles);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

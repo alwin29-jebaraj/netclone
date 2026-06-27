@@ -31,7 +31,7 @@ function loadDB() {
   }
 }
 
-function saveDB(data: any) {
+function saveDB(data) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
   } catch (err) {
@@ -40,16 +40,16 @@ function saveDB(data: any) {
 }
 
 // User Helpers
-function hashPassword(password: string, salt: string): string {
+function hashPassword(password, salt) {
   return crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 }
 
-function generateToken(): string {
+function generateToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
 // Simple Cookie Parser Helper
-function getSessionToken(req: express.Request): string | null {
+function getSessionToken(req) {
   const cookieHeader = req.headers.cookie;
   if (!cookieHeader) return null;
   const cookies = Object.fromEntries(
@@ -229,7 +229,7 @@ app.post('/api/auth/register', (req, res) => {
   }
 
   const db = loadDB();
-  const existingUser = db.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
+  const existingUser = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
   if (existingUser) {
     return res.status(400).json({ error: 'An account with this email already exists' });
   }
@@ -284,7 +284,7 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   const db = loadDB();
-  const user = db.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
+  const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
   if (!user) {
     return res.status(400).json({ error: 'Incorrect email or password' });
   }
@@ -300,7 +300,7 @@ app.post('/api/auth/login', (req, res) => {
   db.sessions.push({ token, userId: user.id, expiresAt });
   saveDB(db);
 
-  const userProfiles = db.profiles.filter((p: any) => p.userId === user.id);
+  const userProfiles = db.profiles.filter((p) => p.userId === user.id);
 
   res.setHeader('Set-Cookie', `netclone_session=${token}; Path=/; HttpOnly; Max-Age=${30 * 24 * 60 * 60}; SameSite=Lax`);
   return res.json({
@@ -314,7 +314,7 @@ app.post('/api/auth/logout', (req, res) => {
   const token = getSessionToken(req);
   if (token) {
     const db = loadDB();
-    db.sessions = db.sessions.filter((s: any) => s.token !== token);
+    db.sessions = db.sessions.filter((s) => s.token !== token);
     saveDB(db);
   }
   res.setHeader('Set-Cookie', 'netclone_session=; Path=/; HttpOnly; Max-Age=0');
@@ -329,17 +329,17 @@ app.get('/api/auth/me', (req, res) => {
   }
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session || new Date(session.expiresAt) < new Date()) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const user = db.users.find((u: any) => u.id === session.userId);
+  const user = db.users.find((u) => u.id === session.userId);
   if (!user) {
     return res.status(401).json({ error: 'User not found' });
   }
 
-  const userProfiles = db.profiles.filter((p: any) => p.userId === user.id);
+  const userProfiles = db.profiles.filter((p) => p.userId === user.id);
 
   return res.json({
     user: { id: user.id, email: user.email },
@@ -353,10 +353,10 @@ app.get('/api/profiles', (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session) return res.status(401).json({ error: 'Unauthorized' });
 
-  const userProfiles = db.profiles.filter((p: any) => p.userId === session.userId);
+  const userProfiles = db.profiles.filter((p) => p.userId === session.userId);
   return res.json(userProfiles);
 });
 
@@ -366,13 +366,13 @@ app.post('/api/profiles', (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session) return res.status(401).json({ error: 'Unauthorized' });
 
   const { name, isKids, avatarColor } = req.body;
   if (!name) return res.status(400).json({ error: 'Profile name is required' });
 
-  const currentProfiles = db.profiles.filter((p: any) => p.userId === session.userId);
+  const currentProfiles = db.profiles.filter((p) => p.userId === session.userId);
   if (currentProfiles.length >= 5) {
     return res.status(400).json({ error: 'Maximum of 5 profiles allowed' });
   }
@@ -398,11 +398,11 @@ app.delete('/api/profiles/:id', (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session) return res.status(401).json({ error: 'Unauthorized' });
 
   const profileId = req.params.id;
-  const profileIndex = db.profiles.findIndex((p: any) => p.id === profileId && p.userId === session.userId);
+  const profileIndex = db.profiles.findIndex((p) => p.id === profileId && p.userId === session.userId);
 
   if (profileIndex === -1) {
     return res.status(404).json({ error: 'Profile not found' });
@@ -420,13 +420,13 @@ app.post('/api/profiles/:id/mylist', (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session) return res.status(401).json({ error: 'Unauthorized' });
 
   const profileId = req.params.id;
   const { movieId } = req.body;
 
-  const profile = db.profiles.find((p: any) => p.id === profileId && p.userId === session.userId);
+  const profile = db.profiles.find((p) => p.id === profileId && p.userId === session.userId);
   if (!profile) return res.status(404).json({ error: 'Profile not found' });
 
   if (!profile.myList.includes(movieId)) {
@@ -443,16 +443,16 @@ app.delete('/api/profiles/:id/mylist/:movieId', (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const db = loadDB();
-  const session = db.sessions.find((s: any) => s.token === token);
+  const session = db.sessions.find((s) => s.token === token);
   if (!session) return res.status(401).json({ error: 'Unauthorized' });
 
   const profileId = req.params.id;
   const movieId = req.params.movieId;
 
-  const profile = db.profiles.find((p: any) => p.id === profileId && p.userId === session.userId);
+  const profile = db.profiles.find((p) => p.id === profileId && p.userId === session.userId);
   if (!profile) return res.status(404).json({ error: 'Profile not found' });
 
-  profile.myList = profile.myList.filter((mId: string) => mId !== movieId);
+  profile.myList = profile.myList.filter((mId) => mId !== movieId);
   saveDB(db);
 
   return res.json(profile);

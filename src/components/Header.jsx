@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, LogOut, Users, ChevronDown, User, Heart } from 'lucide-react';
+import { Search, Bell, LogOut, Users, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const SmileyIconSmall = () => (
@@ -20,16 +20,6 @@ export default function Header({
   setSearchQuery,
   activeTab,
   setActiveTab
-}: {
-  currentProfile: any;
-  profiles: any[];
-  onSelectProfile: (profile: any) => void;
-  onLogout: () => void;
-  onProfileSelection: () => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
 }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);

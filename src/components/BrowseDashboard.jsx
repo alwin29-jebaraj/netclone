@@ -13,20 +13,13 @@ export default function BrowseDashboard({
   onLogout,
   onProfileSelection,
   onUpdateProfileMyList
-}: {
-  currentProfile: any;
-  profiles: any[];
-  onSelectProfile: (profile: any) => void;
-  onLogout: () => void;
-  onProfileSelection: () => void;
-  onUpdateProfileMyList: (myList: string[]) => void;
 }) {
-  const [movies, setMovies] = useState<any[]>([]);
+  const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('home'); // home, mylist, scifi, comedies, kids
-  const [selectedMovie, setSelectedMovie] = useState<any | null>(null);
-  const [activePlayerMovie, setActivePlayerMovie] = useState<any | null>(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [activePlayerMovie, setActivePlayerMovie] = useState(null);
 
   // Fetch Movie catalog
   useEffect(() => {
@@ -45,7 +38,7 @@ export default function BrowseDashboard({
   }, []);
 
   // Sync profile My List changes
-  const handleMyListToggle = async (movieId: string, isInList: boolean) => {
+  const handleMyListToggle = async (movieId, isInList) => {
     const endpoint = `/api/profiles/${currentProfile.id}/mylist${isInList ? `/${movieId}` : ''}`;
     const method = isInList ? 'DELETE' : 'POST';
 
@@ -83,7 +76,7 @@ export default function BrowseDashboard({
       return (
         m.title.toLowerCase().includes(query) ||
         m.synopsis.toLowerCase().includes(query) ||
-        m.tags.some((tag: string) => tag.toLowerCase().includes(query))
+        m.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
@@ -151,7 +144,6 @@ export default function BrowseDashboard({
           {filteredMovies.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {filteredMovies.map((movie) => {
-                const isAddedToList = currentProfile.myList.includes(movie.id);
                 return (
                   <motion.div
                     key={movie.id}
@@ -273,7 +265,6 @@ export default function BrowseDashboard({
           {filteredMovies.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               {filteredMovies.map((movie) => {
-                const isAddedToList = currentProfile.myList.includes(movie.id);
                 return (
                   <motion.div
                     key={movie.id}

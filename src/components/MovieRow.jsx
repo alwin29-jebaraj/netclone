@@ -1,16 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play, Plus, Check, Info } from 'lucide-react';
 import { motion } from 'motion/react';
-
-interface MovieRowProps {
-  key?: string;
-  title: string;
-  movies: any[];
-  onPlay: (movie: any) => void;
-  onOpenDetails: (movie: any) => void;
-  currentProfile: any;
-  onMyListToggle: (movieId: string, isInList: boolean) => Promise<void>;
-}
 
 export default function MovieRow({
   title,
@@ -19,22 +9,36 @@ export default function MovieRow({
   onOpenDetails,
   currentProfile,
   onMyListToggle
-}: MovieRowProps) {
-  const rowRef = useRef<HTMLDivElement>(null);
+}) {
+  const rowRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
 
-  const handleScroll = () => {
-    if (rowRef.current) {
-      setShowLeftArrow(rowRef.current.scrollLeft > 10);
-    }
-  };
+  useEffect(() => {
+    const handleScrollState = () => {
+      if (rowRef.current) {
+        setShowLeftArrow(rowRef.current.scrollLeft > 5);
+      }
+    };
 
-  const slide = (direction: 'left' | 'right') => {
+    const el = rowRef.current;
+    if (el) {
+      el.addEventListener('scroll', handleScrollState);
+      // Run once on load
+      handleScrollState();
+    }
+    return () => {
+      if (el) {
+        el.removeEventListener('scroll', handleScrollState);
+      }
+    };
+  }, [movies]);
+
+  const slide = (direction) => {
     if (rowRef.current) {
       const { scrollLeft, clientWidth } = rowRef.current;
-      const scrollOffset = direction === 'left' ? scrollLeft - clientWidth * 0.75 : scrollLeft + clientWidth * 0.75;
+      const offset = direction === 'left' ? -clientWidth * 0.75 : clientWidth * 0.75;
       rowRef.current.scrollTo({
-        left: scrollOffset,
+        left: scrollLeft + offset,
         behavior: 'smooth'
       });
     }
@@ -49,7 +53,7 @@ export default function MovieRow({
         {title}
       </h2>
 
-      {/* Row Track Container */}
+      {/* Row slider wrapper */}
       <div className="relative">
         {/* Left sliding trigger overlay */}
         {showLeftArrow && (
@@ -61,15 +65,13 @@ export default function MovieRow({
           </button>
         )}
 
-        {/* Horizontal Track list */}
-        <div
+        {/* Scrollable movies list */}
+        <div 
           ref={rowRef}
-          onScroll={handleScroll}
-          className="flex gap-4 overflow-x-auto overflow-y-hidden py-4 px-0.5 no-scrollbar scroll-smooth"
+          className="flex items-center gap-2 md:gap-3 overflow-x-auto scroll-smooth py-2 no-scrollbar px-1"
         >
           {movies.map((movie) => {
             const isAddedToList = currentProfile.myList.includes(movie.id);
-
             return (
               <motion.div
                 key={movie.id}
@@ -96,11 +98,11 @@ export default function MovieRow({
                     {movie.title}
                   </h3>
 
-                  {/* Bottom: actions and tags */}
-                  <div className="space-y-1.5">
-                    {/* Action buttons */}
+                  {/* Bottom details block */}
+                  <div className="space-y-2">
+                    {/* Action buttons list */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         {/* Play quick-action */}
                         <button
                           onClick={() => onPlay(movie)}

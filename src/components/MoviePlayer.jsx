@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw, RotateCw, Volume2, VolumeX, Maximize, ArrowLeft, Loader2, PlayCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export default function MoviePlayer({ movie, onClose }: { movie: any; onClose: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+export default function MoviePlayer({ movie, onClose }) {
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -17,7 +17,7 @@ export default function MoviePlayer({ movie, onClose }: { movie: any; onClose: (
 
   // Auto-hide controls timer
   useEffect(() => {
-    let timer: any;
+    let timer;
     const resetTimer = () => {
       setShowControls(true);
       clearTimeout(timer);
@@ -74,7 +74,7 @@ export default function MoviePlayer({ movie, onClose }: { movie: any; onClose: (
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (e) => {
     if (videoRef.current) {
       const newTime = parseFloat(e.target.value);
       videoRef.current.currentTime = newTime;
@@ -82,13 +82,13 @@ export default function MoviePlayer({ movie, onClose }: { movie: any; onClose: (
     }
   };
 
-  const skip = (seconds: number) => {
+  const skip = (seconds) => {
     if (videoRef.current) {
       videoRef.current.currentTime = Math.max(0, Math.min(videoRef.current.currentTime + seconds, duration));
     }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
@@ -129,7 +129,7 @@ export default function MoviePlayer({ movie, onClose }: { movie: any; onClose: (
   }, []);
 
   // Format Time Helper
-  const formatTime = (timeInSecs: number) => {
+  const formatTime = (timeInSecs) => {
     if (isNaN(timeInSecs)) return '00:00';
     const mins = Math.floor(timeInSecs / 60);
     const secs = Math.floor(timeInSecs % 60);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Edit2, X, Check } from 'lucide-react';
+import { Plus, Trash2, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const SmileyIcon = () => (
@@ -16,21 +16,17 @@ export default function ProfileSelection({
   profiles,
   onSelectProfile,
   onProfilesUpdated
-}: {
-  profiles: any[];
-  onSelectProfile: (profile: any) => void;
-  onProfilesUpdated: () => Promise<void>;
 }) {
   const [isManageMode, setIsManageMode] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileIsKids, setNewProfileIsKids] = useState(false);
   const [newProfileColor, setNewProfileColor] = useState('#E50914');
-  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState(null);
   const [modalError, setModalError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleAddProfile = async (e: React.FormEvent) => {
+  const handleAddProfile = async (e) => {
     e.preventDefault();
     setModalError('');
     if (!newProfileName.trim()) {
@@ -60,14 +56,14 @@ export default function ProfileSelection({
       setNewProfileName('');
       setNewProfileIsKids(false);
       setNewProfileColor('#E50914');
-    } catch (err: any) {
+    } catch (err) {
       setModalError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteProfile = async (id: string, e: React.MouseEvent) => {
+  const handleDeleteProfile = async (id, e) => {
     e.stopPropagation();
     if (!confirm('Are you sure you want to delete this profile? All history and lists will be permanently lost.')) {
       return;

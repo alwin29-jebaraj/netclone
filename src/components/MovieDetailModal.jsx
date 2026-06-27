@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Play, Plus, Check, Volume2, Star } from 'lucide-react';
+import { X, Play, Plus, Check, Star } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function MovieDetailModal({
@@ -8,33 +8,25 @@ export default function MovieDetailModal({
   onPlay,
   currentProfile,
   onMyListToggle
-}: {
-  movie: any;
-  onClose: () => void;
-  onPlay: (movie: any) => void;
-  currentProfile: any;
-  onMyListToggle: (movieId: string, isInList: boolean) => Promise<void>;
 }) {
-  const isInMyList = currentProfile.myList.includes(movie.id);
   const [loading, setLoading] = useState(false);
+  const isInMyList = currentProfile.myList.includes(movie.id);
 
   const handleMyListClick = async () => {
     setLoading(true);
-    try {
-      await onMyListToggle(movie.id, isInMyList);
-    } catch (err) {
-      console.error('Error toggling list:', err);
-    } finally {
-      setLoading(false);
-    }
+    await onMyListToggle(movie.id, isInMyList);
+    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xs p-4 overflow-y-auto select-none">
-      {/* Background Dim Closer */}
-      <div className="absolute inset-0" onClick={onClose}></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 select-none">
+      {/* Dark backdrop blur */}
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 bg-black/80 backdrop-blur-xs transition-opacity cursor-pointer"
+      ></div>
 
-      {/* Modal Container */}
+      {/* Modal dialog wrapper */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -50,8 +42,8 @@ export default function MovieDetailModal({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Hero Backdrop Panel */}
-        <div className="relative h-64 md:h-96 w-full">
+        {/* Billboard Banner */}
+        <div className="relative h-[280px] md:h-[400px] w-full bg-cover bg-center">
           <img
             src={movie.backdrop}
             alt={movie.title}
@@ -77,7 +69,7 @@ export default function MovieDetailModal({
                 <span>Play</span>
               </button>
 
-              {/* Add to List Button */}
+              {/* Toggle watch list */}
               <button
                 onClick={handleMyListClick}
                 disabled={loading}
@@ -103,7 +95,7 @@ export default function MovieDetailModal({
           {/* Left Block - Metadata and Synopsis */}
           <div className="md:col-span-2 space-y-4">
             {/* Metadata headers */}
-            <div className="flex flex-wrap items-center gap-3 text-sm">
+            <div className="flex items-center gap-3 text-xs font-semibold">
               <span className="text-emerald-500 font-bold">98% Match</span>
               <span className="text-neutral-500">{movie.year}</span>
               <span className="border border-neutral-800 bg-[#161616] text-[10px] uppercase font-bold px-1.5 py-0.5 rounded text-neutral-400">
@@ -115,8 +107,8 @@ export default function MovieDetailModal({
               </span>
             </div>
 
-            {/* Detailed Synopsis */}
-            <p className="text-sm md:text-base leading-relaxed text-neutral-200">
+            {/* Movie Synopsis details */}
+            <p className="text-xs md:text-sm text-neutral-300 leading-relaxed font-normal">
               {movie.synopsis}
             </p>
           </div>
@@ -133,7 +125,7 @@ export default function MovieDetailModal({
             <div>
               <span className="text-neutral-500 font-medium font-display">Tags: </span>
               <div className="flex flex-wrap gap-1.5 mt-1.5">
-                {movie.tags.map((tag: string) => (
+                {movie.tags.map((tag) => (
                   <span
                     key={tag}
                     className="bg-[#161616] border border-neutral-900 text-neutral-400 px-2.5 py-0.5 rounded text-[11px] font-medium"
