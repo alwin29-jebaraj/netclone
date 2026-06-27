@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { apiFetch } from '../apiInterceptor';
 
 const SmileyIcon = () => (
   <svg viewBox="0 0 100 100" className="w-16 h-16 text-white/95" fill="currentColor">
@@ -36,7 +37,7 @@ export default function ProfileSelection({
 
     setLoading(true);
     try {
-      const response = await fetch('/api/profiles', {
+      const response = await apiFetch('/api/profiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -71,7 +72,7 @@ export default function ProfileSelection({
 
     setIsDeletingId(id);
     try {
-      const response = await fetch(`/api/profiles/${id}`, {
+      const response = await apiFetch(`/api/profiles/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

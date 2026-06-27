@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import { apiFetch } from '../apiInterceptor';
 
 export default function LoginScreen({ onAuthSuccess }) {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -41,7 +42,7 @@ export default function LoginScreen({ onAuthSuccess }) {
     setLoading(true);
     const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login';
     try {
-      const response = await fetch(endpoint, {
+      const response = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

@@ -5,6 +5,7 @@ import Header from './Header';
 import MovieRow from './MovieRow';
 import MovieDetailModal from './MovieDetailModal';
 import MoviePlayer from './MoviePlayer';
+import { apiFetch } from '../apiInterceptor';
 
 export default function BrowseDashboard({
   currentProfile,
@@ -25,7 +26,7 @@ export default function BrowseDashboard({
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('/api/movies');
+        const response = await apiFetch('/api/movies');
         const data = await response.json();
         setMovies(data);
       } catch (err) {
@@ -43,7 +44,7 @@ export default function BrowseDashboard({
     const method = isInList ? 'DELETE' : 'POST';
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await apiFetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: isInList ? undefined : JSON.stringify({ movieId })

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LoginScreen from './components/LoginScreen';
 import ProfileSelection from './components/ProfileSelection';
 import BrowseDashboard from './components/BrowseDashboard';
+import { apiFetch } from './apiInterceptor';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -13,7 +14,7 @@ export default function App() {
   useEffect(() => {
     const recoverSession = async () => {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await apiFetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
@@ -54,7 +55,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await apiFetch('/api/auth/logout', { method: 'POST' });
     } catch (err) {
       console.error('Error logging out:', err);
     }
@@ -66,7 +67,7 @@ export default function App() {
 
   const handleProfilesUpdated = async () => {
     try {
-      const response = await fetch('/api/profiles');
+      const response = await apiFetch('/api/profiles');
       if (response.ok) {
         const data = await response.json();
         setProfiles(data || []);
