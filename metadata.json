@@ -1,0 +1,6 @@
+{
+  "name": "NetClone Auth",
+  "description": "A full-stack Netflix-inspired authentication platform featuring user sign-in, sign-up, session persistence, profiles selection, and an immersive browse dashboard using Node.js, Express, React, and Tailwind CSS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
