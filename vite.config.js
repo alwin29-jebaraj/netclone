@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/netclone/',
+    base: "/netclone/",
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
